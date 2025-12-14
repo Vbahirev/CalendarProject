@@ -1,0 +1,210 @@
+/* css/trio.css */
+
+/* Подключаем шрифты */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;600;800&family=Oswald:wght@500;700&display=swap');
+
+/* --- ПЕРЕМЕННЫЕ (Цвета пачек обновляются через JS) --- */
+:root {
+    --trio-bg-top: #ffffff;
+    --trio-bg-mid: #ffffff;
+    --trio-bg-bot: #ffffff;
+}
+
+/* Иконка превью для меню выбора шаблона */
+.style-trio { flex-direction: column; gap: 2px; background: #e2e8f0; padding: 2px; }
+.tp-trio-head { height: 12px; background: #94a3b8; border-radius: 2px; width: 100%; }
+.tp-trio-body { flex: 1; background: #fff; border-radius: 1px; width: 100%; border: 1px solid #cbd5e1; }
+
+/* Основной контейнер раскладки */
+.layout-trio {
+    display: flex; flex-direction: column; gap: 60px;
+    padding-bottom: 100px; width: 100%; align-items: center;
+    font-family: var(--font-grid); 
+    color: var(--col-text);
+}
+
+.trio-section-label {
+    font-size: 14px; font-weight: 700; text-transform: uppercase;
+    color: var(--ui-text-muted); margin-bottom: -30px; z-index: 10;
+    background: var(--page-bg); padding: 5px 15px; border-radius: 20px;
+    border: 1px solid var(--ui-border); text-align: center;
+}
+
+/* --- ОБЩИЕ СТИЛИ ВЫЛЕТОВ (BLEED BOX) --- */
+.trio-bleed-box {
+    position: relative; box-sizing: border-box; overflow: hidden;
+    background-color: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+}
+
+/* Пунктирная линия обреза (визуальная) */
+.trim-guide {
+    position: absolute; top: 4mm; left: 4mm; right: 4mm; bottom: 4mm;
+    border: 1px dashed rgba(0,0,0,0.2); pointer-events: none; z-index: 50;
+}
+
+/* --- 1. РАЗДЕЛИТЕЛИ (Шпигель и рекламные поля) --- */
+.trio-separators-layer { display: flex; flex-direction: column; gap: 40px; }
+.trio-separator-wrapper { padding: 10px; border: 1px dashed #e5e7eb; display: flex; justify-content: center; position: relative; }
+.trio-separator-wrapper.selected { outline: 4px solid var(--accent); }
+
+.sep-label-badge {
+    position: absolute; top: -12px; left: 20px; z-index: 60;
+    background: var(--accent); color: white; padding: 4px 12px;
+    border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase;
+}
+
+.trio-separator { width: 305mm; height: 188mm; }
+.trio-separator.header-mode { width: 305mm; height: 218mm; } /* Шапка выше остальных */
+.sep-content { width: 100%; height: 100%; display: flex; flex-direction: column; }
+
+/* Область рекламы/информации (текстовая часть под фото) */
+.sep-ad-area {
+    height: 124mm; background: repeating-linear-gradient(45deg, #f9fafb, #f9fafb 10px, #f3f4f6 10px, #f3f4f6 20px);
+    display: flex; align-items: center; justify-content: center;
+    color: #9ca3af; font-family: var(--font-grid); font-size: 14px; font-weight: 600;
+    text-transform: uppercase; padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+.trio-separator.header-mode .sep-ad-area { display: none; } /* У шапки нет рекламного поля */
+
+/* Область фото */
+.sep-photo-area { flex: 1; position: relative; background: #e5e7eb; overflow: hidden; }
+
+/* Метка для люверса (колечка) */
+.grommet-mark {
+    position: absolute; top: 14mm; left: 50%; transform: translateX(-50%);
+    width: 6mm; height: 6mm; border: 2px solid rgba(255,0,0,0.5); border-radius: 50%;
+    pointer-events: none; z-index: 55;
+}
+
+/* === ИСПРАВЛЕННЫЙ СТИЛЬ ДЛЯ ТЕКСТА НА ФОТО === */
+.sep-custom-text {
+    position: absolute;
+    /* Явные координаты растягивают блок на весь родительский контейнер */
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100%; height: 100%;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    z-index: 20; /* Поверх слоя с картинкой (img-layer), но под элементами интерфейса */
+    pointer-events: none; /* Пропускаем клики сквозь текст, чтобы работал Drag&Drop */
+    
+    /* Типографика */
+    font-family: var(--font-title);
+    font-size: 48px;
+    font-weight: 700;
+    color: #ffffff;
+    
+    /* Жирная тень, чтобы текст читался даже на белом фоне */
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5), 0 8px 24px rgba(0,0,0,0.7);
+    
+    text-align: center;
+    white-space: pre-wrap;
+    line-height: 1.2;
+    padding: 20px;
+}
+
+/* --- 2. КАЛЕНДАРНЫЕ БЛОКИ (Сетки) --- */
+.trio-blocks-layer { display: flex; flex-direction: column; gap: 40px; }
+.trio-print-sheet { width: 305mm; background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
+
+.trio-block {
+    width: 305mm; height: 128mm; position: relative;
+    background: var(--trio-bg-current, #fff); 
+}
+
+.trio-safe-area {
+    position: absolute; top: 16mm; left: 12mm; right: 12mm; bottom: 8mm;
+    display: flex; flex-direction: column;
+}
+
+/* Линия пружины */
+.bind-line {
+    position: absolute; top: 12mm; left: 0; width: 100%; height: 1px; 
+    border-top: 1px dotted red; opacity: 0.5; pointer-events: none; z-index: 50;
+}
+
+/* --- ТИПОГРАФИКА БЛОКОВ --- */
+.tb-header {
+    display: flex; justify-content: space-between; align-items: center;
+    height: 14mm; margin-bottom: 2mm; 
+    border-bottom: 2px solid var(--col-grid);
+}
+
+.tb-month { 
+    font-family: var(--font-title); font-size: 34px; font-weight: 700; text-transform: uppercase; line-height: 1; 
+}
+.tb-month.text-gradient { background: var(--title-color); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.tb-month.text-solid { color: var(--title-color); }
+
+.tb-year { font-family: var(--font-title); font-size: 24px; font-weight: 500; color: var(--ui-text-muted); }
+
+/* --- СЕТКА ДНЕЙ --- */
+.tb-grid-wrapper { flex: 1; display: flex; flex-direction: column; }
+.tb-days-header { display: grid; grid-template-columns: 24px repeat(7, 1fr); height: 6mm; align-items: center; }
+.tb-week-head { text-align: center; font-size: 10px; color: #cbd5e1; font-weight: 700; font-family: var(--font-grid); }
+
+.tb-day-name { text-align: center; font-family: var(--font-grid); font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--ui-text-muted); }
+.tb-day-name.weekend { color: var(--col-weekend); }
+
+.tb-dates-grid { 
+    display: grid; grid-template-columns: 24px repeat(7, 1fr); 
+    grid-template-rows: repeat(6, 1fr); gap: 2px; margin-top: 2px; flex: 1; 
+    font-family: var(--font-grid);
+}
+
+.tb-week-num { 
+    display: flex; align-items: center; justify-content: center; 
+    font-size: 12px; color: #cbd5e1; background: rgba(0,0,0,0.03); 
+    border-radius: 4px; margin: 2px; font-weight: 600; 
+}
+
+/* --- СТИЛИ ЯЧЕЕК --- */
+.tb-cell { 
+    display: flex; align-items: center; justify-content: center; 
+    position: relative; z-index: 1; 
+    font-size: 34px; font-weight: 600; color: var(--col-text);
+    background-color: var(--cal-bg-day); 
+}
+.tb-cell span { margin-top: -2px; }
+
+.tb-cell.empty { border: none !important; background: none !important; box-shadow: none !important; }
+
+/* Варианты стилизации сетки */
+.style-rounded .tb-cell { border: 1px solid var(--col-grid); border-radius: 8px; }
+.style-circles .tb-cell { border: 1px solid var(--col-grid); border-radius: 50%; width: 90%; height: 90%; margin: auto; font-size: 28px; }
+.style-frame .tb-cell { border: 1px solid var(--col-grid); border-radius: 0; }
+.style-lines .tb-cell { border-bottom: 1px solid var(--col-grid); border-radius: 0; }
+
+.tb-cell.weekend { color: var(--col-weekend); background-color: var(--bg-weekend); }
+.tb-cell.holiday { color: var(--col-holiday); background-color: var(--bg-holiday); }
+.style-circles .tb-cell.weekend, .style-circles .tb-cell.holiday { border-color: transparent; }
+
+/* --- МЕТКИ РЕЗА (Crop Marks) --- */
+.crop-marks { position: absolute; inset: 0; pointer-events: none; z-index: 60; }
+.cm { position: absolute; width: 4mm; height: 4mm; border-color: #000; border-style: solid; }
+.cm-tl { top: 0; left: 0; border-width: 0 1px 1px 0; } 
+.cm-tr { top: 0; right: 0; border-width: 0 0 1px 1px; }
+.cm-bl { bottom: 0; left: 0; border-width: 0 1px 0 0; top: auto; border-top: 1px solid #000; }
+.cm-br { bottom: 0; right: 0; border-width: 0 0 0 1px; top: auto; border-top: 1px solid #000; }
+
+/* --- ПЕЧАТЬ --- */
+@media print {
+    body { background: none; }
+    .layout-trio { display: block; padding: 0; margin: 0; width: auto; }
+    
+    /* Скрываем элементы интерфейса при печати */
+    .trio-section-label, .sep-label-badge, .trim-guide, .img-overlay, .btn-up, .bind-line, .grommet-mark { display: none !important; }
+    
+    /* ВАЖНО: Оставляем текст видимым при печати */
+    .sep-custom-text { display: flex !important; }
+    
+    .trio-separator-wrapper, .trio-print-sheet { display: block; padding: 0; margin: 0; border: none; box-shadow: none; width: auto; }
+    .trio-separator, .trio-print-sheet { page-break-after: always; break-inside: avoid; }
+    .trio-block { page-break-after: auto; }
+    
+    /* Логика выборочной печати (только блоки или только разделители) */
+    body.print-mode-blocks .trio-separators-layer { display: none !important; }
+    body.print-mode-separators .trio-blocks-layer { display: none !important; }
+}

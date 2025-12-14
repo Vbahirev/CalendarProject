@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>CalGen PD — Photo Studio</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Bebas+Neue&family=Caveat:wght@400;700&family=Comfortaa:wght@300;400;700&family=Cormorant+Garamond:wght@400;700&family=Dancing+Script:wght@700&family=Inter:wght@300;400;500;600;700;800&family=Jura:wght@400;700&family=Lobster&family=Marck+Script&family=Montserrat:wght@400;700;800&family=Oswald:wght@400;700&family=Pacifico&family=Playfair+Display:wght@400;700&family=Righteous&family=Russo+One&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/planner.css">
+  <link rel="stylesheet" href="css/trio.css">
+</head>
+<body>
+
+  <div class="ripple" id="ripple"></div>
+
+  <header class="top-bar">
+    <div class="logo">CalGen <span>PD</span></div>
+    
+    <nav class="nav-tabs">
+      <button class="nav-btn" onclick="switchTab('catalog')">Каталог</button>
+      <button class="nav-btn active" onclick="switchTab('design')">Дизайн</button>
+      <button class="nav-btn" onclick="switchTab('content')">Контент</button>
+    </nav>
+    
+    <div style="display:flex; align-items:center;">
+        <div class="theme-toggle-wrapper">
+            <button class="toggle" id="toggle" aria-label="Переключить тему">
+              <div class="halo"></div>
+              <div class="clouds-container">
+                <svg class="cloud" viewBox="0 0 24 24"><path d="M18,10 C16.5,10 15.2,10.8 14.5,12 C14.3,12 14.2,12 14,12 C11.8,12 10,13.8 10,16 C10,18.2 11.8,20 14,20 L19,20 C21.2,20 23,18.2 23,16 C23,13.8 21.2,12 19,12 L18,12 C18,10.9 18,10 18,10 Z" /></svg>
+                <svg class="cloud" viewBox="0 0 24 24"><path d="M8,11 C6.5,11 5.2,11.8 4.5,13 C4.3,13 4.2,13 4,13 C1.8,13 0,14.8 0,17 C0,19.2 1.8,21 4,21 L9,21 C11.2,21 13,19.2 13,17 C13,14.8 11.2,13 9,13 L8,13 C8,11.9 8,11 8,11 Z" /></svg>
+              </div>
+              <svg class="main-icon" viewBox="-32 -32 64 64" aria-hidden="true">
+                <defs>
+                  <mask id="crescentMask">
+                    <rect x="-40" y="-40" width="160" height="160" fill="white"></rect>
+                    <circle id="maskCircle" cx="30" cy="-2" r="11" fill="black"></circle>
+                  </mask>
+                  <radialGradient id="sunGradient" cx="40%" cy="40%">
+                    <stop offset="0%"  stop-color="var(--current-c1)"></stop>
+                    <stop offset="40%" stop-color="var(--current-c2)"></stop>
+                    <stop offset="100%" stop-color="var(--current-c3)"></stop>
+                  </radialGradient>
+                </defs>
+                <g id="raysGroup" class="rays-group visible" stroke="var(--current-c3)" stroke-width="2.5" stroke-linecap="round">
+                    <line x1="0" y1="-19" x2="0" y2="-25"></line><line x1="0" y1="19" x2="0" y2="25"></line>
+                    <line x1="-19" y1="0" x2="-25" y2="0"></line><line x1="19" y1="0" x2="25" y2="0"></line>
+                    <line x1="-14" y1="-14" x2="-18" y2="-18"></line><line x1="14" y1="14" x2="18" y2="18"></line>
+                    <line x1="14" y1="-14" x2="18" y2="-18"></line><line x1="-14" y1="14" x2="-18" y2="18"></line>
+                </g>
+                <g mask="url(#crescentMask)">
+                    <circle id="sun" cx="0" cy="0" r="13" fill="url(#sunGradient)"></circle>
+                    <g id="craters" class="craters" fill="#64748b" opacity="0.3">
+                       <circle cx="-5" cy="-3" r="2.5"></circle><circle cx="2" cy="6" r="1.8"></circle><circle cx="5" cy="-5" r="1.5"></circle>
+                    </g>
+                </g>
+              </svg>
+            </button>
+        </div>
+        
+        <button class="btn-print" onclick="window.print()">Печать</button>
+    </div>
+  </header>
+
+  <div class="workspace">
+    <aside class="sidebar">
+      <div class="status-panel">
+         <div class="status-header">
+             <span class="status-title">Режим редактирования</span>
+             <button class="btn-select-all active" id="btn-all" onclick="toggleSelectAll()">ВСЕ</button>
+         </div>
+         <div class="status-text" id="status-text">Редактируем весь 2025 год</div>
+         <div style="font-size:10px; color:var(--ui-text-muted); margin-top:4px;">💡 Клик — выбрать<br>⌨️ Ctrl+Клик — добавить<br>⌨️ Shift+Клик — диапазон</div>
+      </div>
+
+      <div id="tab-catalog" class="panel-section" style="display:none; margin-top:16px;">
+        <div class="catalog-grid">
+            
+            <div class="template-card active" onclick="selectTemplate('standard')">
+                <div class="t-preview style-standard">
+                    <div class="tp-img"></div>
+                    <div class="tp-grid"></div>
+                </div>
+                <div class="t-info">
+                    <span class="t-name">Классика 12</span>
+                    <span class="t-desc">12 карточек с фото</span>
+                </div>
+                <div class="t-check">✔</div>
+            </div>
+
+            <div class="template-card" onclick="selectTemplate('planner')">
+                <div class="t-preview style-planner">
+                    <div class="tp-header"></div>
+                    <div class="tp-cells"></div>
+                </div>
+                <div class="t-info">
+                    <span class="t-name">Настенный Планер</span>
+                    <span class="t-desc">12 месяцев, сетка</span>
+                </div>
+                 <div class="t-check">✔</div>
+            </div>
+
+            <div class="template-card" onclick="selectTemplate('trio')">
+                <div class="t-preview style-trio">
+                    <div class="tp-trio-head"></div>
+                    <div class="tp-trio-body"></div>
+                    <div class="tp-trio-body"></div>
+                </div>
+                <div class="t-info">
+                    <span class="t-name">Квартальный (Трио)</span>
+                    <span class="t-desc">Блоки + Шпигель</span>
+                </div>
+                 <div class="t-check">✔</div>
+            </div>
+
+            <div class="template-card disabled">
+                <div class="t-badge">Скоро</div>
+                <div class="t-preview style-poster">
+                    <div class="tp-full"></div>
+                </div>
+                <div class="t-info">
+                    <span class="t-name">Арт-Постер</span>
+                    <span class="t-desc">Акцент на фото</span>
+                </div>
+            </div>
+
+        </div>
+      </div>
+
+      <div id="tab-design" class="panel-section" style="margin-top:16px;">
+        
+        <details open>
+            <summary>Параметры Страницы</summary>
+            <div class="group-content">
+                <div class="control-row">
+                    <label class="control-label">Формат бумаги</label>
+                    <select id="sel-paper-size" onchange="updatePaperSettings()">
+                        <option value="a4">А4 (210 × 297 мм)</option>
+                        <option value="a3">А3 (297 × 420 мм)</option>
+                    </select>
+                </div>
+                
+                <div class="control-row" id="control-trio-print" style="display:none; border-top:1px solid var(--ui-border); margin-top:10px; padding-top:10px;">
+                    <label class="control-label" style="color:var(--accent);">🖨️ Что печатаем?</label>
+                    <select id="sel-trio-mode" onchange="setTrioPrintMode(this.value)">
+                        <option value="blocks">Только БЛОКИ (Сетки)</option>
+                        <option value="separators">Только РАЗДЕЛители</option>
+                    </select>
+                    <div style="font-size:10px; color:var(--ui-text-muted); margin-top:4px; line-height: 1.3;">
+                        Сетки печатаются пачками по 3 шт. с вылетами.
+                    </div>
+                </div>
+
+                <div class="control-row" id="control-orientation">
+                    <label class="control-label">Ориентация</label>
+                    <div class="toggle-row" style="justify-content: flex-start; gap: 10px;">
+                        <button class="btn-print" id="btn-orient-port" style="flex:1; padding:8px; background:var(--accent);" onclick="setOrientation('portrait')">Вертик.</button>
+                        <button class="btn-print" id="btn-orient-land" style="flex:1; padding:8px; background:var(--sidebar-bg); color:var(--ui-text); border:1px solid var(--ui-border);" onclick="setOrientation('landscape')">Горизонт.</button>
+                    </div>
+                </div>
+            </div>
+        </details>
+        
+        <details>
+           <summary>Редактор Фото</summary>
+           <div class="group-content">
+              <div class="control-row">
+                 <div class="toggle-row" style="margin-top:0">
+                     <span class="control-label">Зум (Масштаб)</span>
+                     <div class="input-group">
+                         <button class="btn-angle" onclick="updateImgTransform('scale', -0.1)">-</button>
+                         <input type="number" id="inp-img-scale" value="1" step="0.1" min="0.5" max="3" onchange="applyImgTransform()">
+                         <button class="btn-angle" onclick="updateImgTransform('scale', 0.1)">+</button>
+                     </div>
+                 </div>
+                 <input type="range" id="rng-img-scale" min="0.5" max="3" step="0.1" value="1" oninput="document.getElementById('inp-img-scale').value=this.value; applyImgTransform()">
+              </div>
+
+              <div class="control-row" id="control-split">
+                 <div class="toggle-row" style="margin-top:0">
+                     <span class="control-label">Размер Фото (%)</span>
+                     <input type="number" id="inp-img-split" value="50" min="20" max="80" style="width:50px; text-align:center" onchange="applyImgTransform()">
+                 </div>
+                 <input type="range" id="rng-img-split" min="20" max="80" step="1" value="50" oninput="document.getElementById('inp-img-split').value=this.value; applyImgTransform()">
+                 <div style="font-size:10px; color:var(--ui-text-muted); text-align:center;">В планере регулирует высоту фото</div>
+              </div>
+
+              <div class="control-row">
+                 <label class="control-label">Фон под фото</label>
+                 <div id="picker-img-bg" class="color-ui-root"></div>
+              </div>
+
+              <div class="control-row">
+                 <div class="toggle-row" style="margin-top:0">
+                     <span class="control-label">Поворот (±5°)</span>
+                     <div class="input-group">
+                         <button class="btn-angle" onclick="updateImgTransform('rotate', -5)">↺</button>
+                         <input type="number" id="inp-img-rotate" value="0" min="-180" max="180" onchange="applyImgTransform()">
+                         <button class="btn-angle" onclick="updateImgTransform('rotate', 5)">↻</button>
+                     </div>
+                 </div>
+              </div>
+
+              <div class="control-row">
+                 <label class="control-label">Позиция (Сдвиг)</label>
+                 <div style="display:flex; gap:10px">
+                     <div style="flex:1">
+                         <div style="font-size:9px; color:var(--ui-text-muted); margin-bottom:2px">По горизонтали (X)</div>
+                         <input type="range" id="rng-img-x" min="-100" max="100" value="0" step="1" oninput="applyImgTransform()">
+                     </div>
+                     <div style="flex:1">
+                         <div style="font-size:9px; color:var(--ui-text-muted); margin-bottom:2px">По вертикали (Y)</div>
+                         <input type="range" id="rng-img-y" min="-100" max="100" value="0" step="1" oninput="applyImgTransform()">
+                     </div>
+                 </div>
+              </div>
+           </div>
+        </details>
+        
+        <details>
+           <summary>Текст на фото</summary>
+           <div class="group-content">
+              <div class="control-row">
+                  <label class="control-label">Ваш Текст</label>
+                  <input type="text" id="inp-overlay-text" placeholder="Например: Отпуск 2025">
+              </div>
+              <div class="control-row">
+                  <label class="control-label">Шрифт Текста</label>
+                  <select id="sel-font-overlay">
+                        <option value="'Inter', sans-serif" style="font-family:'Inter', sans-serif">Inter</option>
+                        <option value="'Montserrat', sans-serif" style="font-family:'Montserrat', sans-serif">Montserrat</option>
+                        <option value="'Oswald', sans-serif" style="font-family:'Oswald', sans-serif">Oswald</option>
+                        <option value="'Space Grotesk', sans-serif" style="font-family:'Space Grotesk', sans-serif">Space Grotesk</option>
+                        <option value="'Jura', sans-serif" style="font-family:'Jura', sans-serif">Jura</option>
+                        <option value="'Comfortaa', cursive" style="font-family:'Comfortaa', cursive">Comfortaa</option>
+                        <option value="'Playfair Display', serif" style="font-family:'Playfair Display', serif">Playfair Display</option>
+                        <option value="'Cormorant Garamond', serif" style="font-family:'Cormorant Garamond', serif">Cormorant Garamond</option>
+                        <option value="'Bebas Neue', sans-serif" style="font-family:'Bebas Neue', sans-serif">Bebas Neue</option>
+                        <option value="'Russo One', sans-serif" style="font-family:'Russo One', sans-serif">Russo One</option>
+                        <option value="'Pacifico', cursive" style="font-family:'Pacifico', cursive">Pacifico</option>
+                        <option value="'Lobster', cursive" style="font-family:'Lobster', cursive">Lobster</option>
+                        <option value="'Caveat', cursive" style="font-family:'Caveat', cursive">Caveat</option>
+                        <option value="'Marck Script', cursive" style="font-family:'Marck Script', cursive">Marck Script</option>
+                        <option value="'Amatic SC', cursive" style="font-family:'Amatic SC', cursive">Amatic SC</option>
+                  </select>
+              </div>
+
+              <div class="control-row">
+                 <label class="control-label">Цвет текста</label>
+                 <div id="picker-overlay-color" class="color-ui-root"></div>
+              </div>
+
+              <div class="control-row">
+                 <div class="toggle-row" style="margin-top:0">
+                     <span class="control-label">Размер (px)</span>
+                     <div class="input-group">
+                         <button class="btn-angle" onclick="stepInput('inp-overlay-size', -2)">-</button>
+                         <input type="number" id="inp-overlay-size" value="40" min="10" max="200">
+                         <button class="btn-angle" onclick="stepInput('inp-overlay-size', 2)">+</button>
+                     </div>
+                 </div>
+              </div>
+
+              <div class="control-row">
+                 <div class="toggle-row" style="margin-top:0">
+                     <span class="control-label">Поворот (шаг 5°)</span>
+                     <div class="input-group">
+                         <button class="btn-angle" onclick="stepInput('inp-overlay-angle', -5, true)">↺</button>
+                         <input type="number" id="inp-overlay-angle" value="0" min="-360" max="360" onchange="updateOverlayProperty('angle', this.value)">
+                         <button class="btn-angle" onclick="stepInput('inp-overlay-angle', 5, true)">↻</button>
+                     </div>
+                 </div>
+                 <div class="toggle-row">
+                    <span class="control-label" style="font-weight:400">Столбиком (Upright)</span>
+                    <label class="switch-wrap">
+                        <input type="checkbox" id="chk-overlay-vertical">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+              </div>
+
+              <div class="toggle-row">
+                  <span class="control-label">Жирный (Bold)</span>
+                  <label class="switch-wrap">
+                      <input type="checkbox" id="chk-overlay-bold">
+                      <span class="slider"></span>
+                  </label>
+              </div>
+
+              <div class="toggle-row">
+                  <span class="control-label">Курсив (Italic)</span>
+                  <label class="switch-wrap">
+                      <input type="checkbox" id="chk-overlay-italic">
+                      <span class="slider"></span>
+                  </label>
+              </div>
+
+              <div class="control-row" style="border-top:1px solid var(--ui-border); padding-top:10px; margin-top:5px;">
+                  <label class="control-label">Внешняя Обводка</label>
+                  <div class="toggle-row" style="justify-content:flex-start; gap:10px;">
+                      <div id="picker-overlay-stroke" class="color-ui-root"></div>
+                      
+                      <div class="input-group" style="width: 100px;">
+                         <button class="btn-angle" onclick="stepInput('inp-overlay-stroke-w', -1, false, 'strokeWidth')">-</button>
+                         <input type="number" id="inp-overlay-stroke-w" value="0" min="0" max="20" placeholder="0">
+                         <button class="btn-angle" onclick="stepInput('inp-overlay-stroke-w', 1, false, 'strokeWidth')">+</button>
+                      </div>
+                  </div>
+              </div>
+           </div>
+        </details>
+        
+        <details>
+           <summary>Сетка и Стиль</summary>
+           <div class="group-content">
+              <div class="control-row">
+                  <label class="control-label">Шрифт сетки (Цифры)</label>
+                  <select id="sel-font-grid">
+                     <option value="'Inter', sans-serif">Inter (Стандарт)</option>
+                     <option value="'Montserrat', sans-serif">Montserrat</option>
+                     <option value="'Oswald', sans-serif">Oswald (Узкий)</option>
+                     <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
+                     <option value="'Jura', sans-serif">Jura</option>
+                     <option value="'Comfortaa', cursive">Comfortaa</option>
+                     <option value="'Playfair Display', serif">Playfair Display</option>
+                     <option value="'Cormorant Garamond', serif">Cormorant Garamond</option>
+                  </select>
+              </div>
+
+              <select id="sel-grid-style">
+                 <option value="">Чистый (Без сетки)</option>
+                 <option value="style-circles">Кружки (Circles)</option>
+                 <option value="style-rounded">Скругленные (Rounded)</option>
+                 <option value="style-frame">Рамки (Frame)</option>
+                 <option value="style-lines">Линии (Lines)</option>
+              </select>
+              
+              <div class="control-row">
+                 <label class="control-label">Цвет Разлиновки</label>
+                 <div id="picker-grid" class="color-ui-root"></div>
+              </div>
+              
+              <div class="control-row">
+                 <label class="control-label">Заливка ячейки</label>
+                 <div id="picker-bg-day" class="color-ui-root"></div>
+              </div>
+              
+              <div class="control-row">
+                  <label class="control-label">Цвет Текста</label>
+                  <div id="picker-text" class="color-ui-root"></div>
+              </div>
+
+              <div id="trio-bg-controls" style="display:none; border-top:1px solid var(--ui-border); padding-top:10px; margin-top:10px;">
+                  <label class="control-label" style="color:var(--accent); margin-bottom:10px; display:block;">Фон пачек (Градиент)</label>
+                  
+                  <div class="control-row" style="margin-bottom:15px;">
+                      <span style="font-size:11px; font-weight:700; color:var(--ui-text-muted);">Верхний блок</span>
+                      <div id="trio-top-editor" class="grad-editor"></div>
+                  </div>
+                  
+                  <div class="control-row" style="margin-bottom:15px;">
+                      <span style="font-size:11px; font-weight:700; color:var(--ui-text-muted);">Средний блок</span>
+                      <div id="trio-mid-editor" class="grad-editor"></div>
+                  </div>
+                  
+                  <div class="control-row">
+                      <span style="font-size:11px; font-weight:700; color:var(--ui-text-muted);">Нижний блок</span>
+                      <div id="trio-bot-editor" class="grad-editor"></div>
+                  </div>
+              </div>
+           </div>
+        </details>
+        
+        <details>
+           <summary>Праздники / Выходные</summary>
+           <div class="group-content">
+              <div class="control-row">
+                  <label class="control-label">Цвет Текста Выходных</label>
+                  <div id="picker-weekend" class="color-ui-root"></div>
+              </div>
+              <div class="control-row">
+                  <label class="control-label">Цвет Текста Праздников</label>
+                  <div id="picker-holiday" class="color-ui-root"></div>
+              </div>
+              
+              <div class="control-row" style="border-top:1px solid var(--ui-border); padding-top:10px; margin-top:5px;">
+                  <label class="control-label">Фон Выходных (Заливка)</label>
+                  <div id="picker-bg-weekend" class="color-ui-root"></div>
+              </div>
+              <div class="control-row">
+                  <label class="control-label">Фон Праздников (Заливка)</label>
+                  <div id="picker-bg-holiday" class="color-ui-root"></div>
+              </div>
+              
+              <div class="toggle-row" style="margin-top:10px;">
+                  <span class="control-label">Легенда</span>
+                  <label class="switch-wrap">
+                      <input type="checkbox" id="chk-legend" checked>
+                      <span class="slider"></span>
+                  </label>
+              </div>
+              
+              <div class="toggle-row">
+                  <span class="control-label">Список праздников</span>
+                  <label class="switch-wrap">
+                      <input type="checkbox" id="chk-list" checked>
+                      <span class="slider"></span>
+                  </label>
+              </div>
+           </div>
+        </details>
+
+        <details>
+          <summary>Фон и Форма</summary>
+          <div class="group-content">
+            <div id="bg-editor" class="grad-editor"></div>
+            <div class="control-row" style="margin-top:10px;">
+              <label class="control-label">Скругление</label>
+              <input type="range" id="rng-radius" min="0" max="50" value="24" style="width:100%">
+            </div>
+            
+            <div class="toggle-row" style="margin-top:10px;">
+                <span class="control-label">Отступ под пружину (7мм)</span>
+                <label class="switch-wrap">
+                    <input type="checkbox" id="chk-holes">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="toggle-row">
+                <span class="control-label">Линия реза</span>
+                <label class="switch-wrap">
+                    <input type="checkbox" id="chk-substrate">
+                    <span class="slider"></span>
+                </label>
+            </div>
+          </div>
+        </details>
+
+        <details>
+            <summary>Заголовок (Шрифт)</summary>
+            <div class="group-content">
+                <div class="control-row">
+                    <label class="control-label">Шрифт Заголовка</label>
+                    <select id="sel-font-title">
+                        <option value="'Inter', sans-serif" style="font-family: 'Inter', sans-serif;">Inter (Стандарт)</option>
+                        <option value="'Montserrat', sans-serif" style="font-family: 'Montserrat', sans-serif;">Montserrat</option>
+                        <option value="'Oswald', sans-serif" style="font-family: 'Oswald', sans-serif;">Oswald (Узкий)</option>
+                        <option value="'Space Grotesk', sans-serif" style="font-family: 'Space Grotesk', sans-serif;">Space Grotesk</option>
+                        <option value="'Jura', sans-serif" style="font-family: 'Jura', sans-serif;">Jura (Техно)</option>
+                        <option value="'Comfortaa', cursive" style="font-family: 'Comfortaa', cursive;">Comfortaa (Круглый)</option>
+                        <option value="'Playfair Display', serif" style="font-family: 'Playfair Display', serif;">Playfair Display</option>
+                        <option value="'Cormorant Garamond', serif" style="font-family: 'Cormorant Garamond', serif;">Cormorant Garamond</option>
+                        <option value="'Bebas Neue', sans-serif" style="font-family: 'Bebas Neue', sans-serif;">BEBAS NEUE</option>
+                        <option value="'Russo One', sans-serif" style="font-family: 'Russo One', sans-serif;">Russo One (Мощный)</option>
+                        <option value="'Righteous', cursive" style="font-family: 'Righteous', cursive;">Righteous</option>
+                        <option value="'Dancing Script', cursive" style="font-family: 'Dancing Script', cursive;">Dancing Script</option>
+                        <option value="'Pacifico', cursive" style="font-family: 'Pacifico', cursive;">Pacifico (Кисть)</option>
+                        <option value="'Lobster', cursive" style="font-family: 'Lobster', cursive;">Lobster</option>
+                        <option value="'Caveat', cursive" style="font-family: 'Caveat', cursive;">Caveat (Маркер)</option>
+                        <option value="'Marck Script', cursive" style="font-family: 'Marck Script', cursive;">Marck Script</option>
+                        <option value="'Amatic SC', cursive" style="font-family: 'Amatic SC', cursive;">Amatic SC (Тонкий)</option>
+                    </select>
+                </div>
+                <div class="control-row">
+                    <label class="control-label">Цвет / Градиент</label>
+                    <div id="title-editor" class="grad-editor"></div>
+                </div>
+            </div>
+        </details>
+      </div>
+
+      <div id="tab-content" class="panel-section" style="display:none; margin-top:16px;">
+         <details open>
+            <summary>Данные</summary>
+            <div class="group-content">
+               <div class="control-row">
+                  <label class="control-label">Год</label>
+                  <input type="number" id="inp-year" value="2025">
+               </div>
+               <div class="control-row">
+                  <label class="control-label">Праздники</label>
+                  <textarea id="inp-holidays" style="height:150px">
+01.01 Новый год
+07.01 Рождество
+08.03 8 Марта
+01.05 День Труда
+09.05 День Победы
+12.06 День России</textarea>
+               </div>
+            </div>
+         </details>
+
+         <details open style="margin-top:10px">
+            <summary>Фото</summary>
+            <div class="group-content">
+               <button onclick="document.getElementById('multi-up').click()" class="btn-print" style="width:100%; background:var(--input-bg); color:var(--ui-text); box-shadow:none; border:1px solid var(--ui-border);">
+                  Загрузить 12 фото
+               </button>
+               <input type="file" id="multi-up" multiple accept="image/*" style="display:none">
+               <p style="font-size:10px; color:var(--ui-text-muted); text-align:center; margin-top:5px;">Или перетащите фото на месяц</p>
+            </div>
+         </details>
+      </div>
+    </aside>
+
+    <main class="preview">
+      <div id="calendar-root" class="cards-wrapper"></div>
+    </main>
+  </div>
+  <input type="file" id="single-up" accept="image/*" style="display:none">
+
+  <script src="js/templates/planner.js"></script>
+  <script src="js/templates/trio.js"></script>
+  <script src="js/app.js" defer></script>
+</body>
+</html>

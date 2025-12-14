@@ -1,0 +1,184 @@
+/* css/planner.css */
+
+/* --- БАЗОВЫЕ НАСТРОЙКИ --- */
+.layout-planner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 40px;
+    font-family: var(--font-grid); 
+    color: var(--col-text);
+}
+
+.layout-planner .card {
+    height: auto !important;
+    width: 100% !important;
+    flex-direction: column !important;
+    background: var(--cal-bg);
+    overflow: hidden;
+}
+
+/* --- ПРОПОРЦИИ --- */
+.layout-planner .card-container-outer {
+    width: 100%;
+    max-width: 500px;
+    aspect-ratio: 210 / 297; /* A4 Portrait */
+    margin: 0 auto;
+}
+.layout-planner.paper-a3 .card-container-outer { aspect-ratio: 297 / 420; }
+
+.layout-planner .card { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
+
+/* --- ВНУТРЕННОСТИ --- */
+
+.planner-card .card-img {
+    width: 100% !important;
+    height: 35% !important; 
+    border-bottom: 1px solid var(--col-grid);
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    z-index: 2;
+}
+
+.planner-body {
+    width: 100% !important;
+    height: 65% !important; 
+    flex: 1; 
+    padding: 20px 24px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ЗАГОЛОВОК */
+.planner-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    border-bottom: 2px solid var(--title-color);
+    padding-bottom: 4px;
+    flex-shrink: 0;
+    font-family: var(--font-title);
+}
+
+.ph-month { 
+    font-size: 32px; 
+    font-weight: 800; 
+    text-transform: uppercase; 
+    line-height: 1; 
+}
+
+.ph-year { 
+    font-size: 20px; 
+    color: var(--col-holiday); 
+    opacity: 0.8;
+    font-weight: 600; 
+}
+
+/* ДНИ НЕДЕЛИ */
+.planner-week-header {
+    display: grid; 
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 4px;
+    text-align: center; 
+    font-size: 11px; 
+    font-weight: 700;
+    color: var(--ui-text-muted); 
+    margin-bottom: 4px; 
+    flex-shrink: 0;
+}
+
+/* СЕТКА */
+.planner-main-grid {
+    display: grid; 
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    grid-auto-rows: 1fr; 
+    gap: 4px;
+    flex-grow: 1; 
+    min-height: 0; 
+    border: none;
+}
+
+.p-cell {
+    border: 1px solid var(--col-grid);
+    border-radius: 6px;
+    position: relative;
+    
+    /* Фон обычной ячейки (из настроек) */
+    background: var(--cal-bg-day, rgba(0,0,0,0.02)); 
+    
+    padding: 4px;
+    display: flex; 
+    flex-direction: column; 
+    align-items: flex-end; 
+    overflow: hidden;
+}
+
+/* Убрали линовку (repeating-linear-gradient) */
+.p-cell:not(.empty) {
+    background-image: none; 
+}
+
+.p-cell.empty { border: none; background: transparent; }
+
+/* НОВЫЕ ПЕРЕМЕННЫЕ ФОНА */
+.p-cell.weekend { 
+    color: var(--col-weekend); 
+    background-color: var(--bg-weekend); /* Фон выходных */
+    border-color: rgba(0,0,0,0.1);
+}
+.p-cell.holiday { 
+    color: var(--col-holiday); 
+    background-color: var(--bg-holiday); /* Фон праздников */
+    border-color: rgba(0,0,0,0.1);
+}
+
+.p-date { 
+    font-size: 14px; 
+    font-weight: 700; 
+    z-index: 2; 
+    line-height: 1;
+}
+
+/* --- ПОДВАЛ --- */
+.planner-notes {
+    margin-top: 12px;
+    flex-shrink: 0;
+    font-size: 10px;
+}
+
+.notes-label { 
+    font-size: 10px; 
+    font-weight: 700; 
+    text-transform: uppercase; 
+    color: var(--ui-text-muted); 
+    display: block;
+    margin-bottom: 4px;
+}
+
+.holiday-footer-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px; 
+}
+
+.h-footer-item {
+    color: var(--col-text);
+    font-weight: 500;
+}
+.h-footer-item span {
+    font-weight: 700;
+    color: var(--col-holiday);
+    margin-right: 3px;
+}
+
+.notes-lines { border-bottom: 1px solid var(--col-grid); height: 18px; margin-top: 2px;}
+
+@media print {
+    .layout-planner { display: block; gap: 0; }
+    .card-container-outer { page-break-after: always; margin: 0; border: none; max-width: none !important; width: 100% !important; height: 100vh !important; }
+    .paper-a4 .card-container-outer { width: 210mm; height: 297mm; }
+    .paper-a3 .card-container-outer { width: 297mm; height: 420mm; }
+}
